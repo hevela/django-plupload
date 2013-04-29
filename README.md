@@ -44,7 +44,7 @@ string to your settings.py -> INSTALLED_APPS = () dictionary.
     #The url where the upload form is located:
     url(r'^$', 'plupload.views.upload'),
     
-3. In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:    
+3.In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:    
 
     FILE_FOLDER = "templates/static/media/csv_files/"
     
@@ -54,6 +54,7 @@ Note that 'FILE_FOLDER' is relative to your 'PROJECT_PATH', wich is added in set
     (for e.g. changing the form design and/or behavior)
 
 **Models**
+
 It's barebones, so it doesn't need any model, so you can easily modify the plupload.py views functions to meet your needs :)
 
 That's all, I'm open for sugestions, or bug corrections if you find one.
