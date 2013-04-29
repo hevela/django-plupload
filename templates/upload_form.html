@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    {% load plupload %}
+    {% plupload_script csrf_token  %}
+</head>
+<body>
+<form method="post" action=".">
+    {% csrf_token %}
+    {% pl_upload_form%}
+    <p>
+        <button type="submit">Save</button>
+    </p>
+</form>
+</body>
+</html>
