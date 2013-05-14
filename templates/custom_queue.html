@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom PLUpload</title>
+    <style type="text/css">
+        #loader span{
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+        #upload_buttons.table button{
+            font-size:12px !important;
+            height: 29px;
+            float: right;
+            margin:2px 9px;
+        }
+        #uploadfiles_table{
+            width: 90px !important;
+        }
+        div.thumb_container{
+            width: 32%;
+            float: left;
+            background-color: #EFEFEF;
+            border: solid 1px #aaa;
+            text-align: center;
+            height: 159px;
+            margin: 4px;
+            position: relative;
+        }
+        div.thumb_container .file_name{
+            font-size: 12px !important;
+            margin-top: .5em;
+        }
+        #table_cont{
+            width:40%;
+            float:left;
+            height:100%;
+        }
+
+        div#filelist {
+            border-left:solid 1px #aaa;
+            border-right:solid 1px #aaa;
+            min-height:162px;
+        }
+        div#filelist div:nth-child(2n+1){
+            background-color: #eee;
+        }
+        #filelist #table_header{
+            width: 100%;
+            overflow:  auto;
+            /* for W3C-compliant browsers */
+            background-image: linear-gradient(top, rgba(255,255,255,255) 3%, rgba(231,231,231,255) 65%, rgba(207,207,207,255) 95%);
+            /* for Safari 5.03+ and Chrome 7+ */
+            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.031596079766670004, rgba(255,255,255,255)), color-stop(0.6508791, rgba(231,231,231,255)), color-stop(0.95345055830403, rgba(207,207,207,255)));
+            /* for Firefox 3.6+ */
+            background-image: -moz-linear-gradient(top, rgba(255,255,255,255) 3%, rgba(231,231,231,255) 65%, rgba(207,207,207,255) 95%);
+            /* for Opera 11.1+ */
+            background-image: -o-linear-gradient(top, rgba(255,255,255,255) 3%, rgba(231,231,231,255) 65%, rgba(207,207,207,255) 95%);
+            /* for IE */
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e7e7e7'endColorstr='#cfcfcf');
+            border-bottom: 1px solid #aaa;
+            border-top: 1px solid #aaa;
+        }
+        #filelist #table_header span{
+        float:left;
+        height:25px;
+        text-align:center;
+        padding-top:.7em;
+        font-size: 12px !important;
+        font-weight: bold;
+        }
+
+        .archivo, .tamanio, .progreso{
+
+            float:left;
+            height:30px;
+            text-align:left;
+            padding-top:.4em;
+        }
+        #head_archivo{
+            width: 30%;
+            border-right: solid 1px #aaa;
+        }
+        .archivo{
+            padding-left:1em;
+            border-right: solid 1px #fff;
+            width: 28%;
+        }
+        .tamanio, #head_size{
+            width: 15%;
+            text-align: center;
+            border-right: solid 1px #aaa;
+        }
+        .tamanio{
+            border-right: solid 1px #fff;
+        }
+        .progreso, #head_progress{
+            width: 54%;
+        }
+        .progreso span{
+            float:left;
+        }
+        .file_row{
+            height:28px;
+        }
+        .file_row span{
+            height:24px;
+        }
+
+        #uploader_cont {
+        margin-top:1em;
+        }
+
+        .thumbs .uploaded_img{
+            max-height: 100px;
+            margin: auto;
+            max-width:130px;
+        }
+        #thumbs_cont{
+            min-height:200px;
+            border-top: solid 1px #aaa;
+            border-right: solid 1px #aaa;
+            border-bottom: solid 1px #aaa;
+            width:59%;
+            float:left;
+        }
+        .thumb_img_cont{
+            padding-top: 6px;
+            width:131px;
+            height:131px;
+            float:left;
+            margin-left: 1em;
+        }
+        .file_name{
+            display: block;
+            text-align: left;
+            margin-left: 1em;
+        }
+        .hidden{
+            display: none;
+        }
+        #progress-bar {
+           background: url({{ STATIC_URL }}images/empty_progress_bar.png) no-repeat left center;
+           width: 110px;
+           height: 20px;
+           margin: -.4em 0 0 3em;
+        }
+        #progress-level {
+           background: url({{ STATIC_URL }}images/full_progress_bar.png);
+           background-repeat: no-repeat;
+           background-position: left center;
+           width:0%; /* SET THIS TO GET THE DESIRE LEVEL */
+           height: 20px;
+        }
+    </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/plupload.full.js"></script>
+
+    <script type="text/javascript">
+        // Im using a dir with todays date as name, please change this and your
+        // urls.py file to meet your needs, or to add files to other folder
+        var d = new Date();
+        var curr_date = d.getDate();
+        var curr_month = d.getMonth() + 1; //Months are zero based
+        var curr_year = String(d.getFullYear());
+        if(curr_date<10){
+           curr_date = "0"+String(curr_date);
+        }
+        if(curr_month<10){
+           curr_month = "0"+String(curr_month);
+        }
+        var date_str = curr_year + "/" + curr_month + "/" + curr_date + "/";
+
+        $(document).on("ready", function() {
+        // -------------Setup----------------
+	    var uploader = new plupload.Uploader({
+		    // General settings
+		    runtimes : 'gears,silverlight,html5,flash',
+		    url : '/plupload/',
+		    max_file_size : '10mb',
+            chunk_size : '1mb',
+		    container: 'uploader_cont',
+		    browse_button : 'pickfiles',
+		    unique_names : true,
+		    multipart_params: {"csrfmiddlewaretoken" : "{{csrf_token}}"},
+		    // Resize images on clientside if we can
+            // uncomment if you are going to upload images
+		    // resize : {width : 640, height : 480, quality : 90},
+		    // Specify what files to browse for
+		    filters : [
+			    {title : "CSV files", extensions : "csv"}
+                //{title : "Image files", extensions : "jpg,gif,png"},
+                //{title : "Zip files", extensions : "zip"}
+		    ],
+		    // Flash settings
+		    flash_swf_url : '{{STATIC_URL}}js/plupload.flash.swf',
+            silverlight_xap_url : '{{STATIC_URL}}js/plupload.silverlight.xap'
+	    });
+	    // -------------This function executes at plUpload init----------------
+	    uploader.bind('Init', function(up, params) {
+		    //$('#filelist').html("<div>Current runtime: " + params.runtime + "</div>");
+	    });
+        var thumbs_cont = $("#thumbs_cont");
+        var filelist = $('#filelist');
+	    $('#uploadfiles').click(function(e) { //se vincula el boton "uploadfiles" con la carga de imagenes
+		    uploader.start();
+		    $("#legend_upload_img").hide();
+		    $("#uploadfiles").hide();
+		    thumbs_cont.append("<div id='loader'><img src='{{STATIC_URL}}images/loader.gif'/><span>Cargando im&aacute;genes...</span></div>");
+
+		    e.preventDefault();
+	    });
+	    $('#uploadfiles_table').click(function(e) { //se vincula el boton "uploadfiles" de la tabla con la carga de imagenes
+		    uploader.start();
+		    thumbs_cont.append("<div id='loader'><img src='{{STATIC_URL}}images/loader.gif'/><span>Cargando im&aacute;genes...</span></div>");
+
+		    e.preventDefault();
+	    });
+	    uploader.init();
+	    // -------------Generates a table of added files----------------
+	    uploader.bind('FilesAdded', function(up, files) {
+		    filelist.removeClass("hidden");
+		    $("#pickfiles").html("Seleccionar Archivos");
+		    $("#upload_buttons").addClass("table");
+		    $.each(files, function(i, file) {
+			    var nombre_archivo;
+			    if (file.name.length>14){
+				    nombre_archivo=file.name.substr(0, 14)+"&tilde;"+file.name.substr(file.name.length-4, file.name.length)
+
+			    }else{
+				    nombre_archivo=file.name;
+			    }
+			    filelist.append(
+				    '<div id="' + file.id + '" class="file_row"><span class="archivo">' +
+				    nombre_archivo + '</span><span class="tamanio">' + plupload.formatSize(file.size) + '</span>'+
+				    '<span class="progreso"><span></span>'+
+					'<div id="progress-bar">'+
+						'<div id="progress-level"></div>'+
+					'</div>'+
+				    '</span>' +
+			    '</div>');
+			    thumbs_cont.append('<div id="thumb_' + file.id + '" class="thumb_container hidden"></div>');
+		    });
+
+		    if(thumbs_cont.is(":hidden")){
+			thumbs_cont.removeClass("hidden");
+		    }
+		    if(thumbs_cont.height()<filelist.height()){
+
+			thumbs_cont.css("min-height", filelist.height()+38);
+		    }
+
+		    if(thumbs_cont.find("div").not(".hidden").length==0){ //Muestra el boton grande solo cuando no hay imagenes guardadas
+			$("#legend_upload_img").show();
+			$("#uploadfiles").show();
+		    }//else{
+			$("#uploadfiles_table").show();
+		    //}
+
+		    up.refresh(); // Reposition Flash/Silverlight
+	    });
+	    // -------------on file upload progress
+	    uploader.bind('UploadProgress', function(up, file) {
+		    $('#' + file.id + " .progreso span").html(file.percent + "%");
+		    $("#progress-level").css("width",file.percent + "%");
+	    });
+	    // -------------Detects and delete bad format files from the upload queue----------------
+	    uploader.bind('Error', function(up, err) {
+		    $('#uploader_cont').append("<div id='err_"+err.file.id+"'>Error: " + err.code +
+			    ", Message: " + err.message +
+			    (err.file ? ", File: " + err.file.name : "") +
+			    "</div>"
+		    );
+		    $("#err_"+err.file.id).remove();
+		    setTimeout("remove_rows('"+err.file.id+"')",1000);
+		    uploader.removeFile(err.file);
+		    up.refresh(); // Reposition Flash/Silverlight
+	    });
+	    // -------------Retrieve uploaded files----------------
+	    uploader.bind('FileUploaded', function(up, file) {
+
+		    var thumb = $("#thumb_"+file.id);
+
+            var url="/get_files/"+date_str;
+            $.ajax({
+                url: url,
+                type: "get",
+                success: function(latest_file){
+                    thumb.html("<div class='upfile'><img src='{{ STATIC_URL }}images/file_icon.png'/><a href='#' class='del_file' rel='"+latest_file+"'>delete file</a></div>").removeClass('hidden');
+                    //creates a link to the file, replace 'csv_files' and 'date_str' with the dir where you are going to upload the files
+                    // you can use this url to show an image, if you uploaded one.
+                    thumb.prepend('<span class="file_name"><a href="{{ STATIC_URL }}media/csv_files/'+date_str+latest_file+'">'+file.name+'</a></span>');
+                }
+            });
+
+		    $("#"+file.id).remove(); //remove the file from the upload list
+
+		    thumbs_cont.find("#loader").remove();
+		    $("#pickfiles").show();
+		    $("#legend_upload_img").hide();
+		    $("#uploadfiles").hide();
+		    $("#uploadfiles_table").show();
+	    });
+        $(".del_file").live("click", function(e){
+            e.preventDefault();
+            var latest_file = $(this).attr("rel");
+            delete_file(latest_file, $(this).parent().parent());
+        });
+    });
+    function remove_rows(id){
+	    $("div#"+id).remove();
+    }
+    //-----------------------------------------------------------------------------
+    //  deletes the selected image from the form AND from the server
+    //-----------------------------------------------------------------------------
+    function delete_file(file, thumb_container){
+        //then again, change the "date_str" to meet your needs
+        var url="/del_file/"+date_str+"?file="+file;
+        $.ajax({
+            url: url,
+            type: "get",
+            success: function(data){
+                if(data == 1){
+                    thumb_container.remove();
+                }else{
+                    thumb_container.append("<span class='notice'>Cannot Delete File</span>")
+                }
+            }
+        });
+
+    }
+    </script>
+</head>
+<body>
+    <form>
+        <div id="uploader_cont">
+            <div id="table_cont">
+            <div id="filelist" class="hidden">
+                <div id="table_header">
+                <span id="head_archivo">Archivo</span>
+                <span id="head_size">Tama&ntilde;o</span>
+                <span id="head_progress">Proceso</span>
+                </div>
+
+            </div>
+            <div id="upload_buttons">
+                <button id="uploadfiles_table" class="default_button_upload hidden">Upload Files</button>
+                <button id="pickfiles" class="default_button_upload">Select Files</button>
+            </div>
+            </div>
+            <div id="thumbs_cont"  class="thumbs hidden">
+            </div>
+        </div>
+    </form>
+</body>
+</html>

@@ -2,13 +2,14 @@ import os
 import datetime
 import random
 import string
+import json
 
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 
-#Dirertory where you want to save your files
+#Directory where you want to save your files
 FILE_FOLDER = "templates/static/media/csv_files/"
 
 
@@ -18,6 +19,15 @@ def upload(request):
         print "post"
     template_vars_template = RequestContext(request)
     return render_to_response('upload_form.html',
+                              template_vars_template)
+
+
+def upload_custom(request):
+    if request.method == "POST":
+        # Do any other process once you have upoloaded you files
+        print "post"
+    template_vars_template = RequestContext(request)
+    return render_to_response('custom_queue.html',
                               template_vars_template)
 
 
@@ -54,6 +64,37 @@ def handle_uploaded_file(f, ext):
     with open(file_name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+def get_files(request, year, month, day):
+    dir_name = str.join("-", [year, month, day])
+    dir_path = os.path.join(settings.PROJECT_PATH, FILE_FOLDER)
+    dir_fd = os.open(dir_path+dir_name, os.O_RDONLY)
+    os.fchdir(dir_fd)
+    filelist = os.listdir(os.getcwd())
+    filelist = filter(lambda x: not os.path.isdir(x), filelist)
+    newest = max(filelist, key=lambda x: os.stat(x).st_mtime)
+    os.close(dir_fd)
+    return HttpResponse(content=newest, status=200,
+                        mimetype="text/plain")
+
+
+def del_file(request, year, month, day):
+    if 'file' in request.GET:
+        dir_name = str.join("-", [year, month, day])
+        dir_path = os.path.join(settings.PROJECT_PATH, FILE_FOLDER)
+        files = os.listdir(dir_path+dir_name)
+        dir_fd = os.open(dir_path+dir_name, os.O_RDONLY)
+        os.fchdir(dir_fd)
+
+        for _file in files:
+            if str(_file) == request.GET['file']:
+                os.remove(_file)
+        os.close(dir_fd)
+        result = 1
+    else:
+        result = 0
+    return HttpResponse(result)
 
 
 def random_string_generator(size=6,

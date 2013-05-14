@@ -13,19 +13,24 @@ class PluploadScript(template.Node):
 
     def render(self, context):
         return """
-            <style type="text/css">@import url(/static/js/jquery.plupload.queue/css/jquery.plupload.queue.css);</style>
-            <script type="text/javascript" src="/static/js/plupload.full.js"></script>
-            <script type="text/javascript" src="/static/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+            <style type="text/css">@import url(%sjs/jquery.plupload.queue/css/jquery.plupload.queue.css);</style>
+            <script type="text/javascript" src="%sjs/plupload.full.js"></script>
+            <script type="text/javascript" src="%sjs/jquery.plupload.queue/jquery.plupload.queue.js"></script>
             <script type="text/javascript">
             $(function() {
                 $("#uploader").pluploadQueue({
                     // General settings
                     runtimes : 'gears,silverlight,html5,flash',
+                    //url where you are going to proccess the upload
                     url : '/plupload/',
                     max_file_size : '10mb',
                     chunk_size : '1mb',
                     unique_names : true,
                     multipart_params: {"csrfmiddlewaretoken" : "%s"},
+
+                    // Resize images on clientside if we can
+                    //uncomment if you are going to upload images
+                    //resize : {width : 640, height : 480, quality : 90},
 
                     // Specify what files to browse for
                     filters : [
@@ -64,8 +69,9 @@ class PluploadScript(template.Node):
             });
             </script>
 
-            """ % (self.csrf_token.resolve(context), settings.STATIC_URL,
-                   settings.STATIC_URL)
+            """ % (settings.STATIC_URL, settings.STATIC_URL,
+                   settings.STATIC_URL, self.csrf_token.resolve(context),
+                   settings.STATIC_URL, settings.STATIC_URL)
 
 
 def plupload_script(parser, token):
