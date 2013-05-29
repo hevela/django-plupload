@@ -10,7 +10,8 @@ You can use it in your applications with simple inclusion tag.
 
 **Usage:**
 In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed, 
-and include the 'pl_upload_form' to generate the 'div' where the upload queue will show:
+along with the url where you are going to process the file uploads.
+and include the 'pl_upload_form' to generate the 'div' where the upload queue will appear:
 
     <!DOCTYPE html>
     <html>
@@ -18,7 +19,7 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
         <title></title>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         {% load plupload %}
-        {% plupload_script csrf_token  %}
+        {% plupload_script csrf_token "/plupload/" %}
     </head>
     <body>
         <form method="post" action=".">
