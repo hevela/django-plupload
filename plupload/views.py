@@ -30,13 +30,11 @@ def upload_custom(request):
     #so i send the constructed url for the latest file load
     #and for the delete file url
     todays_date = datetime.datetime.now().strftime("%Y/%m/%d/")
-    print todays_date
-    url_get_last = "/get_files/"+todays_date
+
     delete_file_url = "/del_file/"+todays_date
     media_folder = "/static/media/csv_files/"+todays_date
     all_files_url = "/get_all_files/"+todays_date
-    template_vars = dict(url_get_last=url_get_last,
-                         delete_file_url=delete_file_url,
+    template_vars = dict(delete_file_url=delete_file_url,
                          media_folder=media_folder,
                          all_files_url=all_files_url)
     template_vars_template = RequestContext(request, template_vars)
@@ -57,7 +55,7 @@ def upload_file(request):
         os.chdir(dir_name)
 
         for _file in request.FILES:
-            handle_uploaded_file(request.FILES[_file], "csv")
+            handle_uploaded_file(request.FILES[_file], request.POST['chunk'])
         os.close(dir_fd)
         #response only to notify plUpload that the upload was successful
         return HttpResponse()
@@ -65,45 +63,22 @@ def upload_file(request):
         raise Http404
 
 
-def handle_uploaded_file(f, ext):
+def handle_uploaded_file(f, chunk):
     """
     Here you can do whatever you like with your files, like resize them if they
     are images
     :param f: the file
-    :param ext: extention to append in the file name
     """
-    filelist = os.listdir(os.getcwd())
-    filelist = filter(lambda x: not os.path.isdir(x), filelist)
-    print "handle", filelist
-    filelist.sort(reverse=True)
-    if not filelist[0].startswith("."):
-        try:
-            file_n = str(int(filelist[0].split(".")[0])+1)
-        except ValueError:
-            file_n = "1000"
+    if int(chunk) > 0:
+        _file = open(f._name, 'a')
     else:
-        file_n = "1000"
-    print file_n
-    file_n += "." + ext
-    with open(file_n, 'wb+') as destination:
+        _file = open(f._name, 'wb+')
+
+    if f.multiple_chunks:
         for chunk in f.chunks():
-            destination.write(chunk)
-
-
-def get_files(request, year, month, day):
-    dir_name = str.join("-", [year, month, day])
-    dir_path = os.path.join(settings.PROJECT_PATH, FILE_FOLDER)
-    dir_fd = os.open(dir_path+dir_name, os.O_RDONLY)
-    os.fchdir(dir_fd)
-    filelist = os.listdir(os.getcwd())
-    filelist = filter(lambda x: not os.path.isdir(x), filelist)
-    print filelist
-    filelist.sort(reverse=True)
-    print filelist[0]
-    #newest = max(filelist, key=lambda x: os.stat(x).st_mtime)
-    os.close(dir_fd)
-    return HttpResponse(content=filelist[0], status=200,
-                        mimetype="text/plain")
+            _file.write(chunk)
+    else:
+        _file.write(f.read())
 
 
 def del_file(request, year, month, day):

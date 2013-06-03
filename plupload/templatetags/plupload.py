@@ -105,14 +105,13 @@ register.tag("pl_upload_form", pl_upload_form)
 
 
 class CustomPluploadScript(template.Node):
-    def __init__(self, csrf_token, upload_url, url_get_last,
+    def __init__(self, csrf_token, upload_url,
                  delete_file_url, media_folder, all_files_url):
         """generates the necessary script for file upload
         :param csrf_token: token de proteccion
         """
         self.csrf_token = template.Variable(csrf_token)
         self.upload_url = upload_url
-        self.url_get_last = template.Variable(url_get_last)
         self.delete_file_url = template.Variable(delete_file_url)
         self.media_folder = template.Variable(media_folder)
         self.all_files_url = template.Variable(all_files_url)
@@ -187,8 +186,7 @@ class CustomPluploadScript(template.Node):
                     '</div>'+
                     '</span>' +
                     '</div>');
-                thumbs_cont.append('<div id="thumb_' + file.id +
-                '" class="thumb_container hidden"></div>');
+
             });
             $("#uploadfiles_table").removeClass("hidden");
 
@@ -218,27 +216,7 @@ class CustomPluploadScript(template.Node):
         });
         // -------------Retrieve uploaded files----------------
         uploader.bind('FileUploaded', function(up, file) {
-            var thumb = $("#thumb_"+file.id);
-            //Get last uploaded file
-            var url = "%s";
-            $.ajax({
-                url: url,
-                type: "get",
-                success: function(latest_file){
-                    thumb.html("<div class='upfile'>" +
-                    "<img src='%simages/file_icon.png'/>" +
-                    "<a href='#' class='del_file' rel='" +
-                    latest_file +
-                    "'>delete file</a></div>").removeClass('hidden');
-                    //creates a link to the file,
-                    //replace 'media folder' with the dir where you
-                    //are going to upload the files
-                    //you can use this url to show an image, if you uploaded one
-                    thumb.prepend('<span class="file_name">'+
-                    '<a href="%s'+latest_file+'">'+
-                    file.name+'</a></span>');
-                }
-            });
+            get_existent_files();
 
             $("#"+file.id).remove(); //remove the file from the upload list
             thumbs_cont.find("#loader").remove();
@@ -286,6 +264,7 @@ class CustomPluploadScript(template.Node):
             type: "get",
             success: function(data){
                 if(data.length > 0){
+                    $("#thumbs_cont").html("");
                     data.forEach(function(file){
                         var thumb = '<div id="thumb_'+file.name+
                         '" class="thumb_container">'+
@@ -308,8 +287,7 @@ class CustomPluploadScript(template.Node):
                     self.upload_url,
                     self.csrf_token.resolve(context),
                     settings.STATIC_URL, settings.STATIC_URL,
-                    settings.STATIC_URL, self.url_get_last.resolve(context),
-                    settings.STATIC_URL, self.media_folder.resolve(context),
+                    settings.STATIC_URL,
                     self.delete_file_url.resolve(context),
                     self.all_files_url.resolve(context),
                     self.media_folder.resolve(context))
@@ -319,11 +297,10 @@ def plupload_script_custom(parser, token):
     parameters = token.split_contents()
     csrf_token_form = parameters[1]
     upload_url = parameters[2]
-    url_get_last = parameters[3]
-    delete_file_url = parameters[4]
-    media_folder = parameters[5]
-    all_files_url = parameters[6]
-    return CustomPluploadScript(csrf_token_form, upload_url, url_get_last,
+    delete_file_url = parameters[3]
+    media_folder = parameters[4]
+    all_files_url = parameters[5]
+    return CustomPluploadScript(csrf_token_form, upload_url,
                                 delete_file_url, media_folder, all_files_url)
 
 register.tag("plupload_script_custom", plupload_script_custom)

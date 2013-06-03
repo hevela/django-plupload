@@ -4,7 +4,7 @@
     <title>Custom PLUpload</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     {% load plupload %}
-    {% plupload_script_custom csrf_token '/plupload/' url_get_last delete_file_url media_folder all_files_url %}
+    {% plupload_script_custom csrf_token '/plupload/' delete_file_url media_folder all_files_url %}
 </head>
 <body>
     <form method="post" action=".">
