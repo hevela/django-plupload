@@ -157,10 +157,14 @@ class CustomPluploadScript(template.Node):
             uploader.start();
             thumbs_cont.append("<div id='loader'>"+
             "<img src='%simages/loader.gif'/>"+
-            "<span>Cargando im&aacute;genes...</span></div>");
+            "<span>Cargando Archivos...</span></div>");
             e.preventDefault();
         });
         uploader.init();
+        // -------------Send the filename, useful for large uploads-------------
+        uploader.bind('BeforeUpload', function(up, file) {
+            up.settings.multipart_params['filename'] = file.name;
+        });
         // -------------Generates a table of added files----------------
         uploader.bind('FilesAdded', function(up, files) {
             filelist.removeClass("hidden");
