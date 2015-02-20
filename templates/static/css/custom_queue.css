@@ -40,6 +40,9 @@ div#filelist {
 div#filelist div:nth-child(2n+1){
     background-color: #eee;
 }
+#filelist{
+    width: 100%;
+}
 #filelist #table_header{
     width: 100%;
     overflow:  auto;
@@ -56,8 +59,7 @@ div#filelist div:nth-child(2n+1){
     border-bottom: 1px solid #aaa;
     border-top: 1px solid #aaa;
 }
-#filelist #table_header span{
-float:left;
+#table_header th{
 height:25px;
 text-align:center;
 padding-top:.7em;
@@ -65,42 +67,22 @@ font-size: 12px !important;
 font-weight: bold;
 }
 
-.archivo, .tamanio, .progreso{
-
-    float:left;
-    height:30px;
-    text-align:left;
-    padding-top:.4em;
-}
 #head_archivo{
     width: 30%;
     border-right: solid 1px #aaa;
 }
-.archivo{
-    padding-left:1em;
-    border-right: solid 1px #fff;
-    width: 28%;
-}
-.tamanio, #head_size{
+#head_size{
     width: 15%;
     text-align: center;
     border-right: solid 1px #aaa;
 }
-.tamanio{
-    border-right: solid 1px #fff;
-}
-.progreso, #head_progress{
+#head_progress{
     width: 54%;
 }
 .progreso span{
     float:left;
 }
-.file_row{
-    height:28px;
-}
-.file_row span{
-    height:24px;
-}
+
 
 #uploader_cont {
 margin-top:1em;

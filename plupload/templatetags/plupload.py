@@ -26,7 +26,7 @@ class PluploadScript(template.Node):
                     url : %s,
                     max_file_size : '10mb',
                     chunk_size : '1mb',
-                    unique_names : true,
+                    unique_names : false,
                     multipart_params: {"csrfmiddlewaretoken" : "%s"},
 
                     // Resize images on clientside if we can
@@ -35,8 +35,8 @@ class PluploadScript(template.Node):
 
                     // Specify what files to browse for
                     filters : [
-                        {title : "CSV files", extensions : "csv"}
-                        //{title : "Image files", extensions : "jpg,gif,png"},
+                        //{title : "CSV files", extensions : "csv"}
+                        {title : "Image files", extensions : "jpg,gif,png"},
                         //{title : "Zip files", extensions : "zip"}
                     ],
 
@@ -127,6 +127,7 @@ class CustomPluploadScript(template.Node):
         get_existent_files();
         // -------------Setup----------------
         var uploader = new plupload.Uploader({
+            drop_element : "filelist",
             // General settings
             runtimes : 'gears,silverlight,html5,flash',
             url : %s,
@@ -141,8 +142,8 @@ class CustomPluploadScript(template.Node):
             // resize : {width : 640, height : 480, quality : 90},
             // Specify what files to browse for
             filters : [
-                {title : "CSV files", extensions : "csv"}
-                //{title : "Image files", extensions : "jpg,gif,png"},
+                //{title : "CSV files", extensions : "csv"}
+                {title : "Image files", extensions : "jpg,gif,png"},
                 //{title : "Zip files", extensions : "zip"}
             ],
             // Flash settings
@@ -179,17 +180,19 @@ class CustomPluploadScript(template.Node):
                 }else{
                     nombre_archivo=file.name;
                 }
-                filelist.append(
-                    '<div id="' + file.id + '" class="file_row">' +
-                    '<span class="archivo">' +
-                    nombre_archivo + '</span><span class="tamanio">' +
-                    plupload.formatSize(file.size) + '</span>'+
-                    '<span class="progreso"><span></span>'+
+                var row = $("<tr>").attr('id', file.id).addClass('file_row');
+                var filename_cell = $("<td>").addClass("archivo").html(nombre_archivo);
+                var filesize = $("<td>").addClass("tamanio").text(plupload.formatSize(file.size));
+                var progress = $("<td>").addClass("progreso").html(
+                    '<span></span>'+
                     '<div id="progress-bar">'+
                     '<div id="progress-level"></div>'+
-                    '</div>'+
-                    '</span>' +
-                    '</div>');
+                    '</div>'
+                );
+                row.append(filename_cell);
+                row.append(filesize);
+                row.append(progress);
+                filelist.append(row);
 
             });
             $("#uploadfiles_table").removeClass("hidden");
@@ -201,6 +204,7 @@ class CustomPluploadScript(template.Node):
                 thumbs_cont.css("min-height", filelist.height()+38);
             }
             up.refresh(); // Reposition Flash/Silverlight
+            up.start()
         });
         // -------------on file upload progress
         uploader.bind('UploadProgress', function(up, file) {
@@ -316,14 +320,14 @@ class PluploadFormCustomQueue(template.Node):
         return """
         <div id="uploader_cont">
             <div id="table_cont">
-            <div id="filelist" class="hidden">
-                <div id="table_header">
-                <span id="head_archivo">File</span>
-                <span id="head_size">File Size</span>
-                <span id="head_progress">Progress</span>
-                </div>
+            <table id="filelist" class="hidden">
+                <tr id="table_header">
+                    <th id="head_archivo">File</th>
+                    <th id="head_size">File Size</th>
+                    <th id="head_progress">Progress</th>
+                </tr>
 
-            </div>
+            </table>
             <div id="upload_buttons">
                 <button id="uploadfiles_table" class="default_button_upload hidden">Upload Files</button>
                 <button id="pickfiles" class="default_button_upload">Select Files</button>

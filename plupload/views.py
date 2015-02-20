@@ -55,9 +55,10 @@ def upload_file(request):
         os.chdir(dir_name)
 
         for _file in request.FILES:
+            print request.POST
             handle_uploaded_file(request.FILES[_file],
-                                 request.POST['chunk'],
-                                 request.POST['filename'])
+                                 request.POST.get('chunk', 0),
+                                 request.POST['name'])
         os.close(dir_fd)
         #response only to notify plUpload that the upload was successful
         return HttpResponse()
@@ -116,4 +117,4 @@ def get_all_files(request, year, month, day):
         if not file_.startswith("."):
             files.append(dict(name=file_.split(".")[0], filename=file_))
     return HttpResponse(content=json.dumps(files), status=200,
-                        mimetype="application/json")
+                        content_type="application/json")
