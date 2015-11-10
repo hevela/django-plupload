@@ -41,11 +41,10 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
     #The url where the upload form is located:
     url(r'^$', 'plupload.views.upload'),
 
-3.In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:
+3.Specify the directory in which you would like to save the uploaded files:
 
-    FILE_FOLDER = "templates/static/media/csv_files/"
+    UPLOAD_ROOT = '/tmp/upload/
 
-Note that 'FILE_FOLDER' is relative to your 'PROJECT_PATH', wich is added in settings.py
 
 4.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)

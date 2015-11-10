@@ -1,16 +1,11 @@
 import os
 import datetime
-import random
-import string
 import json
 
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-
-#Directory where you want to save your files
-FILE_FOLDER = "templates/static/media/csv_files/"
 
 
 def upload(request):
@@ -44,15 +39,11 @@ def upload_custom(request):
 
 def upload_file(request):
     if request.method == 'POST' and request.FILES:
-        dir_name = str(datetime.date.today())
-        dir_fd = os.open(os.path.join(settings.PROJECT_PATH,
-                                      FILE_FOLDER),
-                         os.O_RDONLY)
+        dir_fd = os.open(
+            settings.UPLOAD_ROOT,
+            os.O_RDONLY
+        )
         os.fchdir(dir_fd)
-        #creates a directory named to today's date
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-        os.chdir(dir_name)
 
         for _file in request.FILES:
             handle_uploaded_file(request.FILES[_file],
@@ -72,12 +63,13 @@ def handle_uploaded_file(f, chunk, filename):
     :param f: the file
     :param chunk: number of chunk to save
     """
+
     if int(chunk) > 0:
         #opens for append
-        _file = open(filename, 'a')
+        _file = open(filename, 'ab')
     else:
         #erases content
-        _file = open(filename, 'w')
+        _file = open(filename, 'wb')
 
     if f.multiple_chunks:
         for chunk in f.chunks():
@@ -89,7 +81,7 @@ def handle_uploaded_file(f, chunk, filename):
 def del_file(request, year, month, day):
     if 'file' in request.GET:
         dir_name = str.join("-", [year, month, day])
-        dir_path = os.path.join(settings.PROJECT_PATH, FILE_FOLDER)
+        dir_path = settings.UPLOAD_ROOT
         files = os.listdir(dir_path+dir_name)
         dir_fd = os.open(dir_path+dir_name, os.O_RDONLY)
         os.fchdir(dir_fd)
@@ -106,7 +98,7 @@ def del_file(request, year, month, day):
 
 def get_all_files(request, year, month, day):
     dir_name = str.join("-", [year, month, day])
-    dir_path = os.path.join(settings.PROJECT_PATH, FILE_FOLDER)
+    dir_path = settings.UPLOAD_ROOT,
     dir_fd = os.open(dir_path+dir_name, os.O_RDONLY)
     os.fchdir(dir_fd)
     filelist = os.listdir(os.getcwd())
