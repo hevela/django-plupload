@@ -5,11 +5,11 @@ django-plupload is a barebones multi file upload app for django. Uses plupload [
 You can use it in your applications with simple inclusion tag.
 
 **Requirements:**
-- Nothing really, if you plan to upload images, then you'll need PIL, but just for files, you don't need anything
-- Well, you'll need django (at least 1.4v) installed and running
+- Django 1.4+
+- Pillow if you need to upload images
 
 **Usage:**
-In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed, 
+In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed,
 along with the url where you are going to process the file uploads.
 and include the 'pl_upload_form' to generate the 'div' where the upload queue will appear:
 
@@ -31,24 +31,20 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
         </form>
     </body>
     </html>
-    
+
 **Installation**
 
-1.Install an app. Do it by adding:
-
-    'plupload', 
-
-string to your settings.py -> INSTALLED_APPS = () dictionary.
+1.Add 'plupload' to your INSTALLED_APPS
 
 2.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
 
     #The url where the upload form is located:
     url(r'^$', 'plupload.views.upload'),
-    
-3.In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:    
+
+3.In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:
 
     FILE_FOLDER = "templates/static/media/csv_files/"
-    
+
 Note that 'FILE_FOLDER' is relative to your 'PROJECT_PATH', wich is added in settings.py
 
 4.Edit templates and styles to meet your needs. (Optional)
