@@ -9,6 +9,7 @@ You can use it in your applications with simple inclusion tag.
 - Pillow if you need to upload images
 
 **Usage:**
+
 In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed,
 along with the url where you are going to process the file uploads.
 and include the 'pl_upload_form' to generate the 'div' where the upload queue will appear:
@@ -31,6 +32,30 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
         </form>
     </body>
     </html>
+
+**Using the PlUploadFormField**
+
+The `PlUploadFormField` can be used on a form like this:
+
+    class UploadForm(forms.ModelForm):
+
+        uploads = PlUploadFormField(
+            path='uploads',
+            options={
+                "max_file_size": '5000mb'
+            }
+        )
+
+All the values in the `options` dictionary will be passed to the PlUpload constructor.
+
+For a full list of options that can be passed to PlUpload, please refer to:
+
+http://www.plupload.com/docs/Options
+
+### TODO
+
+* Make PlUploadFormField fully customizable
+*
 
 **Installation**
 
