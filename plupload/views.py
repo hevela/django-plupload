@@ -15,8 +15,8 @@ FILE_FOLDER = "templates/static/media/csv_files/"
 
 def upload(request):
     if request.method == "POST":
-        # Do any other process once you have upoloaded you files
-        print "post"
+        # Handle the upload here
+        pass
     template_vars_template = RequestContext(request)
     return render_to_response('upload_form.html',
                               template_vars_template)
@@ -24,8 +24,8 @@ def upload(request):
 
 def upload_custom(request):
     if request.method == "POST":
-        # Do any other process once you have upoloaded you files
-        print "post"
+        # Handle the upload here
+        pass
     #I'm using a dir with today date as name,
     #so i send the constructed url for the latest file load
     #and for the delete file url
@@ -55,7 +55,6 @@ def upload_file(request):
         os.chdir(dir_name)
 
         for _file in request.FILES:
-            print request.POST
             handle_uploaded_file(request.FILES[_file],
                                  request.POST.get('chunk', 0),
                                  request.POST['name'])
