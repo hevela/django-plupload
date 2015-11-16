@@ -1,14 +1,13 @@
-django-plupload
-===============
+# django-plupload
 
 django-plupload is a barebones multi file upload app for django. Uses plupload [http://www.plupload.com/], and jQuery.
 You can use it in your applications with simple inclusion tag.
 
-**Requirements:**
+## Requirements
 - Django 1.4+
 - Pillow if you need to upload images
 
-**Usage:**
+## Usage
 
 In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed,
 along with the url where you are going to process the file uploads.
@@ -33,7 +32,7 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
     </body>
     </html>
 
-**Using the PlUploadFormField**
+## Using the PlUploadFormField
 
 The `PlUploadFormField` can be used on a form like this:
 
@@ -55,9 +54,8 @@ http://www.plupload.com/docs/Options
 ### TODO
 
 * Make PlUploadFormField fully customizable
-*
 
-**Installation**
+## Installation
 
 1.Add 'plupload' to your INSTALLED_APPS
 
@@ -74,7 +72,7 @@ http://www.plupload.com/docs/Options
 4.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)
 
-**Models**
+## Models
 
 It's barebones, so it doesn't need any model, so you can easily modify the plupload.py views functions to meet your needs :)
 
