@@ -13,6 +13,9 @@ class PlUploadFormField(FilePathField):
     def __init__(self, required=True, widget=widget, options=None, label=None,
                  initial=None, help_text=None, *args, **kwargs):
 
+        if options is None:
+            options = dict()
+
         options.setdefault('max_file_size', '100mb')
         options.setdefault('chunk_size', '1mb')
 
