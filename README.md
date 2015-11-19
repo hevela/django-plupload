@@ -1,3 +1,6 @@
+[![Build Status](https://secure.travis-ci.org/vellonce/django-plupload.svg?branch=master)](https://secure.travis-ci.org/erudit/django-plupload?branch=master)
+[![Coverage](https://codecov.io/github/vellonce/django-plupload/coverage.svg?branch=master)](https://codecov.io/github/erudit/django-plupload?branch=master)
+
 # django-plupload
 
 django-plupload is a barebones multi file upload app for django. Uses plupload [http://www.plupload.com/], and jQuery.
