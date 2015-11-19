@@ -34,9 +34,21 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
 
 ## Using the PlUploadFormField
 
+If you have a model that defines a `FileField`, for example:
+
+    class MyUpload(models.Model):
+
+        uploads = models.FileField(
+            blank=True, null=True
+        )
+
+
 The `PlUploadFormField` can be used on a form like this:
 
     class UploadForm(forms.ModelForm):
+
+        class Meta:
+            model = MyUpload
 
         uploads = PlUploadFormField(
             path='uploads',
