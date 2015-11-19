@@ -342,4 +342,7 @@ class PluploadFormCustomQueue(template.Node):
 def pl_upload_form_custom_queue(parser, token):
     return PluploadFormCustomQueue()
 
-register.tag("pl_upload_form_custom_queue", pl_upload_form_custom_queue)
+register.tag(
+    "pl_upload_form_custom_queue",
+    pl_upload_form_custom_queue
+)

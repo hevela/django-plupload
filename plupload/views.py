@@ -21,9 +21,9 @@ def upload_custom(request):
     if request.method == "POST":
         # Handle the upload here
         pass
-    #I'm using a dir with today date as name,
-    #so i send the constructed url for the latest file load
-    #and for the delete file url
+    # I'm using a dir with today date as name,
+    # so i send the constructed url for the latest file load
+    # and for the delete file url
     todays_date = datetime.datetime.now().strftime("%Y/%m/%d/")
 
     delete_file_url = "/del_file/"+todays_date
@@ -50,7 +50,7 @@ def upload_file(request):
                                  request.POST.get('chunk', 0),
                                  request.POST['name'])
         os.close(dir_fd)
-        #response only to notify plUpload that the upload was successful
+        # response only to notify plUpload that the upload was successful
         return HttpResponse()
     else:
         raise Http404
@@ -65,10 +65,10 @@ def handle_uploaded_file(f, chunk, filename):
     """
 
     if int(chunk) > 0:
-        #opens for append
+        # opens for append
         _file = open(filename, 'ab')
     else:
-        #erases content
+        # erases content
         _file = open(filename, 'wb')
 
     if f.multiple_chunks:
