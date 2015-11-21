@@ -1,15 +1,18 @@
-django-plupload
-===============
+[![Build Status](https://secure.travis-ci.org/vellonce/django-plupload.svg?branch=master)](https://secure.travis-ci.org/erudit/django-plupload?branch=master)
+[![Coverage](https://codecov.io/github/vellonce/django-plupload/coverage.svg?branch=master)](https://codecov.io/github/erudit/django-plupload?branch=master)
+
+# django-plupload
 
 django-plupload is a barebones multi file upload app for django. Uses plupload [http://www.plupload.com/], and jQuery.
 You can use it in your applications with simple inclusion tag.
 
-**Requirements:**
-- Nothing really, if you plan to upload images, then you'll need PIL, but just for files, you don't need anything
-- Well, you'll need django (at least 1.4v) installed and running
+## Requirements
+- Django 1.4+
+- Pillow if you need to upload images
 
-**Usage:**
-In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed, 
+## Usage
+
+In the html template just load the 'plupload_script' tag passing the csrf token to generate the javascript needed,
 along with the url where you are going to process the file uploads.
 and include the 'pl_upload_form' to generate the 'div' where the upload queue will appear:
 
@@ -31,30 +34,60 @@ and include the 'pl_upload_form' to generate the 'div' where the upload queue wi
         </form>
     </body>
     </html>
-    
-**Installation**
 
-1.Install an app. Do it by adding:
+## Using the PlUploadFormField
 
-    'plupload', 
+If you have a model that defines a `FileField`, for example:
 
-string to your settings.py -> INSTALLED_APPS = () dictionary.
+    class MyUpload(models.Model):
+
+        uploads = models.FileField(
+            blank=True, null=True
+        )
+
+
+The `PlUploadFormField` can be used on a form like this:
+
+    class UploadForm(forms.ModelForm):
+
+        class Meta:
+            model = MyUpload
+
+        uploads = PlUploadFormField(
+            path='uploads',
+            options={
+                "max_file_size": '5000mb'
+            }
+        )
+
+All the values in the `options` dictionary will be passed to the PlUpload constructor.
+
+For a full list of options that can be passed to PlUpload, please refer to:
+
+http://www.plupload.com/docs/Options
+
+### TODO
+
+* Make PlUploadFormField fully customizable
+
+## Installation
+
+1.Add 'plupload' to your INSTALLED_APPS
 
 2.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
 
     #The url where the upload form is located:
     url(r'^$', 'plupload.views.upload'),
-    
-3.In plupload/views.py, change the FILE_FOLDER var to whatever dir you want to use:    
 
-    FILE_FOLDER = "templates/static/media/csv_files/"
-    
-Note that 'FILE_FOLDER' is relative to your 'PROJECT_PATH', wich is added in settings.py
+3.Specify the directory in which you would like to save the uploaded files:
+
+    UPLOAD_ROOT = '/tmp/upload/
+
 
 4.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)
 
-**Models**
+## Models
 
 It's barebones, so it doesn't need any model, so you can easily modify the plupload.py views functions to meet your needs :)
 

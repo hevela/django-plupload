@@ -1,0 +1,28 @@
+<script type="text/javascript" src="{{ STATIC_URL}}/js/moxie.js"></script>
+
+<script type="text/javascript" src="{{ STATIC_URL}}/js/plupload.full.min.js"></script>
+
+<script type="text/javascript" src="{{ STATIC_URL}}/js/plupload_widget.js"></script>
+
+<input{{ final_attrs }} style="display: none;">
+
+<div id="filelist">Your browser doesn't have Flash, Silverlight or HTML5 support.</div>
+<br />
+
+<div id="container">
+    <a id="pickfiles" href="javascript:;">[Select files]</a>
+    <a id="uploadfiles" href="javascript:;">[Upload files]</a>
+</div>
+
+<br />
+<pre id="console"></pre>
+
+
+<script type="text/javascript">
+  var json_params = JSON.parse('{{ json_params }}');
+  $(function() {
+      create_uploader(
+          json_params
+      );
+  });
+</script>
